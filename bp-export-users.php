@@ -6,38 +6,34 @@
  */
 
 # http://www.php.net/manual/en/function.fputcsv.php#87120
-if(!function_exists('fputcsv2')) {
-  function fputcsv2 ($fh, array $fields, $delimiter = ',', $enclosure = '"', $mysql_null = false) {
-    $delimiter_esc = preg_quote($delimiter, '/');
-    $enclosure_esc = preg_quote($enclosure, '/');
+function fputcsv2 ($fh, array $fields, $delimiter = ',', $enclosure = '"', $mysql_null = false) {
+  $delimiter_esc = preg_quote($delimiter, '/');
+  $enclosure_esc = preg_quote($enclosure, '/');
 
-    $output = array();
-    foreach ($fields as $field) {
-      if ($field === null && $mysql_null) {
-        $output[] = 'NULL';
-        continue;
-      }
-
-      $output[] = preg_match("/(?:${delimiter_esc}|${enclosure_esc}|\s)/", $field) ? (
-        $enclosure . str_replace($enclosure, $enclosure . $enclosure, $field) . $enclosure
-      ) : $field;
+  $output = array();
+  foreach ($fields as $field) {
+    if ($field === null && $mysql_null) {
+      $output[] = 'NULL';
+      continue;
     }
 
-    fwrite($fh, join($delimiter, $output) . "\n");
+    $output[] = preg_match("/(?:${delimiter_esc}|${enclosure_esc}|\s)/", $field) ? (
+      $enclosure . str_replace($enclosure, $enclosure . $enclosure, $field) . $enclosure
+    ) : $field;
   }
+
+  fwrite($fh, join($delimiter, $output) . "\n");
 }
 
 # http://www.php.net/manual/en/function.fputcsv.php#103987
-if(!function_exists('array_to_CSV')) {
-  function array_to_CSV($data)
-  {
-    $outstream = fopen("php://temp", 'r+');
-    fputcsv2($outstream, $data, ',', '"');
-    rewind($outstream);
-    $csv = fgets($outstream);
-    fclose($outstream);
-    return $csv;
-  }
+function array_to_CSV($data)
+{
+  $outstream = fopen("php://temp", 'r+');
+  fputcsv2($outstream, $data, ',', '"');
+  rewind($outstream);
+  $csv = fgets($outstream);
+  fclose($outstream);
+  return $csv;
 }
 
 

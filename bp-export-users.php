@@ -1,6 +1,7 @@
 <?php
 /*
  * Plugin Name: BP Export Users
+ * Description: Allows exporting of all user data from WordPress and BuddyPress to CSV.
  * Author: dxw
  * Author URI: http://dxw.net/
  */

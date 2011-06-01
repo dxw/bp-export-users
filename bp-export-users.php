@@ -56,6 +56,7 @@ class BP_Export_Users {
       'display_name',
       'spam',
       'deleted');
+
     $this->bp_fields = array(
       'user_login',
       'user_nicename',
@@ -70,6 +71,10 @@ class BP_Export_Users {
       'A bit about you',
       'twitter',
       'flickr');
+
+    // The provided list of BuddyPress fields is probably site-specific, so...
+    $this->wp_fields = apply_filters('bp_export_users_wp_fields', $this->wp_fields);
+    $this->bp_fields = apply_filters('bp_export_users_bp_fields', $this->bp_fields);
   }
 
   function admin_menu() {

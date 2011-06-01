@@ -86,16 +86,8 @@ class BP_Export_Users {
       $this->export();
   }
 
-  function export() {
-    header('Content-type: text/plain; charset=utf8');
-    $basename = ('buddypress-users_'.strftime('%Y-%m-%d'));
-
-    header('Pragma: public');
-    header('Cache-control: max-age=0');
-    header("Content-Type: text/csv");
-    header('Content-Disposition: attachment; filename='.$basename.'.csv');
-
-    echo array_to_CSV(array_merge($this->wp_fields, $this->bp_fields));
+  function get_csv() {
+    $csv = array_to_CSV(array_merge($this->wp_fields, $this->bp_fields));
 
     foreach (get_users() as $user) {
       $row = array();
@@ -113,12 +105,25 @@ class BP_Export_Users {
         $row[$field] = $value;
       }
 
-      echo array_to_CSV($row);
+      $csv .= array_to_CSV($row);
 
       // More data (?):
       #print_r(get_userdata( $user->ID ));
     }
 
+    return $csv;
+  }
+
+  function export() {
+    header('Content-type: text/plain; charset=utf8');
+    $basename = ('buddypress-users_'.strftime('%Y-%m-%d'));
+
+    header('Pragma: public');
+    header('Cache-control: max-age=0');
+    header("Content-Type: text/csv");
+    header('Content-Disposition: attachment; filename='.$basename.'.csv');
+
+    echo $this->get_csv();
     die();
   }
 

@@ -88,6 +88,13 @@ class BP_Export_Users {
 
   function export() {
     header('Content-type: text/plain; charset=utf8');
+    $basename = ('buddypress-users_'.strftime('%Y-%m-%d'));
+
+    header('Pragma: public');
+    header('Cache-control: max-age=0');
+    header("Content-Type: text/csv");
+    header('Content-Disposition: attachment; filename='.$basename.'.csv');
+
     echo array_to_CSV(array_merge($this->wp_fields, $this->bp_fields));
 
     foreach (get_users() as $user) {

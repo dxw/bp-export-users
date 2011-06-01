@@ -56,6 +56,20 @@ class BP_Export_Users {
       'display_name',
       'spam',
       'deleted');
+    $this->bp_fields = array(
+      'user_login',
+      'user_nicename',
+      'user_email',
+      'Name',
+      'Telephone',
+      'Job Title',
+      'Organisation',
+      'Region',
+      'Primary Discipline',
+      'Grade',
+      'A bit about you',
+      'twitter',
+      'flickr');
   }
 
   function admin_menu() {
@@ -69,14 +83,28 @@ class BP_Export_Users {
 
   function export() {
     header('Content-type: text/plain; charset=utf8');
-    echo array_to_CSV($this->wp_fields);
+    echo array_to_CSV(array_merge($this->wp_fields, $this->bp_fields));
 
     foreach (get_users() as $user) {
       $row = array();
       foreach ($this->wp_fields as $field) {
         $row[$field] = $user->{$field};
       }
+
+      $bp_data = BP_XProfile_ProfileData::get_all_for_user($user->ID);
+      foreach ($this->bp_fields as $field) {
+        $value = $bp_data[$field];
+
+        if (is_array($value))
+          $value = $value['field_data'];
+
+        $row[$field] = $value;
+      }
+
       echo array_to_CSV($row);
+
+      // More data (?):
+      #print_r(get_userdata( $user->ID ));
     }
 
     die();
@@ -94,11 +122,6 @@ class BP_Export_Users {
 </div>
 <?php
   }
-
-
-  ////////////////////////////////////////////////////////////////////////////
-  //
-
 }
 
 new BP_Export_Users;

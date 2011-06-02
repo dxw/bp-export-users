@@ -90,7 +90,7 @@ class BP_Export_Users {
   function get_csv() {
     $csv = array_to_CSV(array_merge($this->wp_fields, $this->bp_fields));
 
-    foreach (get_users() as $user) {
+    foreach (get_users(array('blog_id' => 0)) as $user) {
       $row = array();
       foreach ($this->wp_fields as $field) {
         $row[$field] = $user->{$field};

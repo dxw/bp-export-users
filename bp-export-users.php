@@ -7,6 +7,7 @@
  */
 
 # http://www.php.net/manual/en/function.fputcsv.php#87120
+#TODO: doesn't handle newlines
 function fputcsv2 ($fh, array $fields, $delimiter = ',', $enclosure = '"', $mysql_null = false) {
   $delimiter_esc = preg_quote($delimiter, '/');
   $enclosure_esc = preg_quote($enclosure, '/');
@@ -84,13 +85,20 @@ class BP_Export_Users {
       $this->export();
   }
 
+  function sanitize($value) {
+    $value = str_replace("\r", '', $value);
+    $value = str_replace("\n", '', $value);
+    $value = str_replace("\t", '', $value);
+    return $value;
+  }
+
   function get_csv() {
     $csv = array_to_CSV(array_merge($this->wp_fields, $this->bp_fields));
 
     foreach (get_users(array('blog_id' => 0)) as $user) {
       $row = array();
       foreach ($this->wp_fields as $field) {
-        $row[$field] = $user->{$field};
+        $row[$field] = $this->sanitize($user->{$field});
       }
 
       $bp_data = BP_XProfile_ProfileData::get_all_for_user($user->ID);
@@ -99,6 +107,8 @@ class BP_Export_Users {
 
         if (is_array($value))
           $value = $value['field_data'];
+
+        $value = $this->sanitize($value);
 
         $row[$field] = $value;
       }
@@ -113,12 +123,11 @@ class BP_Export_Users {
   }
 
   function export() {
-    header('Content-type: text/plain; charset=utf8');
     $basename = ('buddypress-users_'.strftime('%Y-%m-%d'));
 
     header('Pragma: public');
     header('Cache-control: max-age=0');
-    header("Content-Type: text/csv");
+    header("Content-Type: text/csv; charset=utf8");
     header('Content-Disposition: attachment; filename='.$basename.'.csv');
 
     echo $this->get_csv();

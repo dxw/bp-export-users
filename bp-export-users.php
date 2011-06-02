@@ -59,9 +59,6 @@ class BP_Export_Users {
       'deleted');
 
     $this->bp_fields = array(
-      'user_login',
-      'user_nicename',
-      'user_email',
       'Name',
       'Telephone',
       'Job Title',

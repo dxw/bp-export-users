@@ -19,9 +19,7 @@ function fputcsv2 ($fh, array $fields, $delimiter = ',', $enclosure = '"', $mysq
       continue;
     }
 
-    $output[] = preg_match("/(?:${delimiter_esc}|${enclosure_esc}|\s)/", $field) ? (
-      $enclosure . str_replace($enclosure, $enclosure . $enclosure, $field) . $enclosure
-    ) : $field;
+    $output[] = $enclosure . str_replace($enclosure, $enclosure . $enclosure, $field) . $enclosure;
   }
 
   fwrite($fh, join($delimiter, $output) . "\n");

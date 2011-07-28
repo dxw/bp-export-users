@@ -59,6 +59,8 @@ class BP_Export_Users {
       'spam',
       'deleted');
 
+    $this->wp_meta_fields = array();
+
     $this->bp_fields = array(
       'Name',
       'Telephone',
@@ -70,10 +72,6 @@ class BP_Export_Users {
       'A bit about you',
       'twitter',
       'flickr');
-
-    // The provided list of BuddyPress fields is probably site-specific, so...
-    $this->wp_fields = apply_filters('bp_export_users_wp_fields', $this->wp_fields);
-    $this->bp_fields = apply_filters('bp_export_users_bp_fields', $this->bp_fields);
   }
 
   function admin_menu() {
@@ -93,12 +91,16 @@ class BP_Export_Users {
   }
 
   function get_csv() {
-    $csv = array_to_CSV(array_merge($this->wp_fields, $this->bp_fields));
+    $csv = array_to_CSV(array_merge($this->wp_fields, $this->wp_meta_fields, $this->bp_fields));
 
     foreach (get_users(array('blog_id' => 0)) as $user) {
       $row = array();
       foreach ($this->wp_fields as $field) {
         $row[$field] = $this->sanitize($user->{$field});
+      }
+
+      foreach ($this->wp_meta_fields as $field) {
+        $row[$field] = $this->sanitize(get_user_meta($user->ID, $field, true));
       }
 
       $bp_data = BP_XProfile_ProfileData::get_all_for_user($user->ID);
@@ -123,6 +125,13 @@ class BP_Export_Users {
   }
 
   function export() {
+    // The provided list of BuddyPress fields is probably site-specific, so...
+    $this->wp_fields = apply_filters('bp_export_users_wp_fields', $this->wp_fields);
+    $this->wp_meta_fields = apply_filters('bp_export_users_wp_meta_fields', $this->wp_meta_fields);
+    $this->bp_fields = apply_filters('bp_export_users_bp_fields', $this->bp_fields);
+
+    $csv = $this->get_csv();
+
     $basename = ('buddypress-users_'.strftime('%Y-%m-%d'));
 
     header('Pragma: public');
@@ -130,7 +139,7 @@ class BP_Export_Users {
     header("Content-Type: text/csv; charset=utf8");
     header('Content-Disposition: attachment; filename='.$basename.'.csv');
 
-    echo $this->get_csv();
+    echo $csv;
     die();
   }
 

@@ -102,23 +102,21 @@ class BP_Export_Users {
       foreach ($this->wp_meta_fields as $field) {
         $row[$field] = $this->sanitize(get_user_meta($user->ID, $field, true));
       }
+      if (class_exists('BP_XProfile_ProfileData')) {
+        $bp_data = BP_XProfile_ProfileData::get_all_for_user($user->ID);
+        foreach ($this->bp_fields as $field) {
+          $value = $bp_data[$field];
 
-      $bp_data = BP_XProfile_ProfileData::get_all_for_user($user->ID);
-      foreach ($this->bp_fields as $field) {
-        $value = $bp_data[$field];
-
-        if (is_array($value))
+          if (is_array($value))
           $value = $value['field_data'];
 
-        $value = $this->sanitize($value);
+          $value = $this->sanitize($value);
 
-        $row[$field] = $value;
+          $row[$field] = $value;
+        }
       }
 
       $csv .= array_to_CSV($row);
-
-      // More data (?):
-      #print_r(get_userdata( $user->ID ));
     }
 
     return $csv;

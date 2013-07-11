@@ -3,16 +3,15 @@ Contributors: holizz
 Github link: https://github.com/dxw/bp-export-users
 Tags: buddypress, export
 Requires at least: 3.1.3
-Tested up to: 3.1.3
+Tested up to: 3.5.2
 
-Allows exporting of all user data from WordPress and BuddyPress to CSV.
+Allows exporting of all user data from WordPress and BuddyPress to CSV. If you don't have BuddyPress installed it just exports WordPress user data.
 
 == Description ==
 
 It adds a menu item "Export Users" under the "Tools" menu.
 
-
-== Installation ==
+Installation:
 
 1. Unzip it where it goes.
 2. Enable it.

@@ -2,7 +2,7 @@
 /*
  * Plugin Name: BP Export Users
  * Description: Allows exporting of all user data from WordPress and BuddyPress to CSV.
- * Version:     1.1
+ * Version:     1.2
  * Plugin URI:  https://github.com/dxw/bp-export-users
  * Author:      dxw
  * Author URI:  http://dxw.net/
